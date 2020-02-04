@@ -19,6 +19,10 @@
  * @version $Id$
  */
 
+use ApnsPHP\AbstractService;
+use ApnsPHP\Message;
+use ApnsPHP\Push;
+
 define('VALID_TOKEN', '1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
 define('INVALID_TOKEN', 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
 
@@ -29,11 +33,11 @@ date_default_timezone_set('Europe/Rome');
 error_reporting(-1);
 
 // Using Autoload all classes are loaded on-demand
-require_once 'ApnsPHP/Autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 // Instanciate a new ApnsPHP_Push object
-$push = new ApnsPHP_Push(
-	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
+$push = new Push(
+	AbstractService::ENVIRONMENT_SANDBOX,
 	'server_certificates_bundle_sandbox.pem'
 );
 
@@ -51,10 +55,10 @@ $push->connect();
 
 for ($i = 1; $i <= 10; $i++) {
 	// Instantiate a new Message with a single recipient
-	$message = new ApnsPHP_Message($i == 5 ? INVALID_TOKEN : VALID_TOKEN);
+	$message = new Message($i == 5 ? INVALID_TOKEN : VALID_TOKEN);
 
 	// Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
-	// over a ApnsPHP_Message object retrieved with the getErrors() message.
+	// over a ApnsPHP\ApnsPHP_Message object retrieved with the getErrors() message.
 	$message->setCustomIdentifier(sprintf("Message-Badge-%03d", $i));
 
 	// Set badge icon to "3"

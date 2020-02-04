@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * ApnsPHP_Log_Interface interface definition.
+ * ApnsPHP_Push_Server_Exception class definition.
  *
  * LICENSE
  *
@@ -17,25 +17,15 @@
  * @version $Id$
  */
 
-/**
- * @defgroup ApnsPHP_Log Log
- * @ingroup ApplePushNotificationService
- */
+namespace ApnsPHP\Push\Server;
+
+use ApnsPHP\Push\PushException;
 
 /**
- * The Log Interface.
+ * Exception class.
  *
- * Implement the Log Interface and pass the object instance to all
- * ApnsPHP_Abstract based class to use a custom log.
- *
- * @ingroup ApnsPHP_Log
+ * @ingroup ApnsPHP\Push\ApnsPHP_Push_Server
  */
-interface ApnsPHP_Log_Interface
+class ServerPushException extends PushException
 {
-	/**
-	 * Logs a message.
-	 *
-	 * @param  $sMessage @type string The message.
-	 */
-	public function log($sMessage);
 }

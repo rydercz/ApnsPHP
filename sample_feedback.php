@@ -20,17 +20,20 @@
  */
 
 // Adjust to your timezone
+use ApnsPHP\AbstractService;
+use ApnsPHP\Feedback;
+
 date_default_timezone_set('Europe/Rome');
 
 // Report all PHP errors
 error_reporting(-1);
 
 // Using Autoload all classes are loaded on-demand
-require_once 'ApnsPHP/Autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 // Instanciate a new ApnsPHP_Feedback object
-$feedback = new ApnsPHP_Feedback(
-	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
+$feedback = new Feedback(
+	AbstractService::ENVIRONMENT_SANDBOX,
 	'server_certificates_bundle_sandbox.pem'
 );
 

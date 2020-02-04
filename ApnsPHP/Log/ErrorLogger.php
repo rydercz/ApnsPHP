@@ -17,27 +17,29 @@
  * @version $Id$
  */
 
+namespace ApnsPHP\Log;
+
 /**
  * A simple logger.
  *
  * This simple logger implements the Log Interface.
  *
- * This simple logger outputs The Message to php error_log() prefixed with 
+ * This simple logger outputs The Message to php error_log() prefixed with
  * service name (ApplePushNotificationService).
- * 
  *
- * @see ApnsPHP_Log_Silent
+ *
+ * @see SilentLogger
  * @ingroup ApnsPHP_Log
  */
-class ApnsPHP_Log_Error implements ApnsPHP_Log_Interface
+class ErrorLogger implements LoggerInterface
 {
-	/**
-	 * Logs a message.
-	 *
-	 * @param  $sMessage @type string The message.
-	 */
-	public function log($sMessage)
-	{
-		error_log(" ApnsPHP: ".trim($sMessage));
-	}
+    /**
+     * Logs a message.
+     *
+     * @param  $sMessage @type string The message.
+     */
+    public function log($sMessage)
+    {
+        error_log(" ApnsPHP: " . trim($sMessage));
+    }
 }

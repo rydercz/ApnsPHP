@@ -20,17 +20,21 @@
  */
 
 // Adjust to your timezone
+use ApnsPHP\AbstractService;
+use ApnsPHP\Message\SafariMessage;
+use ApnsPHP\Push;
+
 date_default_timezone_set('Europe/Rome');
 
 // Report all PHP errors
 error_reporting(-1);
 
 // Using Autoload all classes are loaded on-demand
-require_once 'ApnsPHP/Autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 // Instantiate a new ApnsPHP_Push object
-$push = new ApnsPHP_Push(
-	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
+$push = new Push(
+	AbstractService::ENVIRONMENT_SANDBOX,
 	'server_certificates_bundle_sandbox.pem'
 );
 
@@ -44,7 +48,7 @@ $push->setRootCertificationAuthority('entrust_root_certification_authority.pem')
 $push->connect();
 
 // Instantiate a new Safari message with a single recipient
-$message = new ApnsPHP_Message_Safari('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
+$message = new SafariMessage('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
 
 // Set the title of the notification.
 $message->setTitle('Flight A998 Now Boarding');

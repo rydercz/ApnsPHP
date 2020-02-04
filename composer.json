@@ -10,6 +10,8 @@
 		"lib-openssl": "*"
 	},
 	"autoload": {
-        "files": ["ApnsPHP/Autoload.php"]
+		"psr-4": {
+			"ApnsPHP\\": "ApnsPHP/"
+		}
     }
 }

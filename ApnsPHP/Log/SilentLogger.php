@@ -17,6 +17,8 @@
  * @version $Id$
  */
 
+namespace ApnsPHP\Log;
+
 /**
  * A simple logger.
  *
@@ -25,18 +27,18 @@
  * This simple logger ignore The Message and does nothing.
  * This class was built for web environment where all output should be omitted for not being sent to the client.
  *
- * @see ApnsPHP_Log_Error
+ * @see ErrorLogger
  * @ingroup ApnsPHP_Log
  */
-class ApnsPHP_Log_Silent implements ApnsPHP_Log_Interface
+class SilentLogger implements LoggerInterface
 {
-	/**
-	 * Logs a message.
-	 *
-	 * @param  $sMessage @type string The message.
-	 */
-	public function log($sMessage)
-	{
+    /**
+     * Logs a message.
+     *
+     * @param  $sMessage @type string The message.
+     */
+    public function log($sMessage)
+    {
 
-	}
+    }
 }
