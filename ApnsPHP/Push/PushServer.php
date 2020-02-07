@@ -144,13 +144,13 @@ class PushServer extends Push
             case SIGQUIT:
             case SIGINT:
                 if (($nPid = posix_getpid()) != $this->_nParentPid) {
-                    $this->_log("INFO: Child $nPid received signal #{$nSignal}, shutdown...");
+                    $this->logger->info("Child $nPid received signal #{$nSignal}, shutdown...");
                     $this->_nRunningProcesses--;
                     exit(0);
                 }
                 break;
             default:
-                $this->_log("INFO: Ignored signal #{$nSignal}.");
+                $this->logger->info("Ignored signal #{$nSignal}.");
                 break;
         }
     }
@@ -164,7 +164,7 @@ class PushServer extends Push
     public function onShutdown()
     {
         if (posix_getpid() == $this->_nParentPid) {
-            $this->_log('INFO: Parent shutdown, cleaning memory...');
+            $this->logger->info('Parent shutdown, cleaning memory...');
             @shm_remove($this->_hShm) && @shm_detach($this->_hShm);
             @sem_remove($this->_hSem);
         }
@@ -196,17 +196,17 @@ class PushServer extends Push
             $this->_nCurrentProcess = $i;
             $this->_aPids[$i] = $nPid = pcntl_fork();
             if ($nPid == -1) {
-                $this->_log('WARNING: Could not fork');
+                $this->logger->warning('Could not fork');
             } else if ($nPid > 0) {
                 // Parent process
-                $this->_log("INFO: Forked process PID {$nPid}");
+                $this->logger->info("Forked process PID {$nPid}");
                 $this->_nRunningProcesses++;
             } else {
                 // Child process
                 try {
                     parent::connect();
                 } catch (Exception $e) {
-                    $this->_log('ERROR: ' . $e->getMessage() . ', exiting...');
+                    $this->logger->error($e->getMessage() . ', exiting...');
                     exit(1);
                 }
                 $this->_mainLoop();
@@ -294,7 +294,7 @@ class PushServer extends Push
             pcntl_signal_dispatch();
 
             if (posix_getppid() != $this->_nParentPid) {
-                $this->_log("INFO: Parent process {$this->_nParentPid} died unexpectedly, exiting...");
+                $this->logger->info("Parent process {$this->_nParentPid} died unexpectedly, exiting...");
                 break;
             }
 
@@ -312,7 +312,7 @@ class PushServer extends Push
 
             $nMessages = count($aQueue);
             if ($nMessages > 0) {
-                $this->_log('INFO: Process ' . ($this->_nCurrentProcess + 1) . " has {$nMessages} messages, sending...");
+                $this->logger->info('Process ' . ($this->_nCurrentProcess + 1) . " has {$nMessages} messages, sending...");
                 parent::send();
             } else {
                 usleep(self::MAIN_LOOP_USLEEP);

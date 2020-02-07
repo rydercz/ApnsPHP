@@ -19,6 +19,29 @@ A **full set** of *open source* PHP classes to interact with the **Apple Push No
 
 News
 ----
+- **February 7, 2020**, Refactoring - remove library logging and use [PSR-3 Logger Interface](https://www.php-fig.org/psr/psr-3/). New minimum supported PHP version is 5.4.
+- **February 4, 2020**, Refactoring - [PSR-4 autoloader](https://www.php-fig.org/psr/psr-4/). File `ApnsPHP/Autoload.php` was removed, instead use composer autoloader.
+
+    ***Renamed classes:***
+    
+    | Old name                          | New name                                  |
+    |-----------------------------------|-------------------------------------------|
+    |`ApnsPHP_Abstract`                 |`ApnsPHP\AbstractService`                  |
+    |`ApnsPHP_Exception`                |`ApnsPHP\Exception`                        |
+    |`ApnsPHP_Feedback`                 |`ApnsPHP\Feedback`                         |
+    |`ApnsPHP_Message`                  |`ApnsPHP\Message`                          |
+    |`ApnsPHP_Push`                     |`ApnsPHP\Push`                             |
+    |`ApnsPHP_Log_Embedded`             |`ApnsPHP\Log\EmbeddedLogger`               |
+    |`ApnsPHP_Log_Error`                |`ApnsPHP\Log\ErrorLogger`                  |
+    |`ApnsPHP_Log_Interface`            |`ApnsPHP\Log\LoggerInterface`              |
+    |`ApnsPHP_Log_Silent`               |`ApnsPHP\Log\SilentLogger`                 |
+    |`ApnsPHP_Message_Custom`           |`ApnsPHP\Message\CustomMessage`            |
+    |`ApnsPHP_Message_Exception`        |`ApnsPHP\Message\MessageException`         |
+    |`ApnsPHP_Message_Safari`           |`ApnsPHP\Message\SafariMessage`            |
+    |`ApnsPHP_Push_Exception`           |`ApnsPHP\Push\PushException`               |
+    |`ApnsPHP_Push_Server`              |`ApnsPHP\Push\PushServer`                  |
+    |`ApnsPHP_Push_Server_Exception`    |`ApnsPHP\Push\Server\ServerPushException`  |
+    
 - **June 1, 2016**, First implementation of the HTTP/2 Protocol, please download [this package](https://github.com/immobiliare/ApnsPHP/releases/tag/v2.0.0-alpha) (please check if you have CURL with HTTP2 support built in your PHP version and generate a new certificate, you cannot use the same as binary version: [Creating a Universal Push Notification Client SSL Certificate](https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/AddingCapabilities/AddingCapabilities.html#//apple_ref/doc/uid/TP40012582-CH26-SW11)).
 - **September 29, 2015**, Some stats on this README.md, thanks [Badge Poser](https://poser.pugx.org).
 - **May 12, 2015**, ApnsPHP has been moved to the [Immobiliare Labs](https://github.com/immobiliare) organization on github.
@@ -70,7 +93,7 @@ All client-server activities are based on the "on error, retry" pattern with cus
 Requirements
 -------------
 
-PHP 5.3.0 or later with OpenSSL, PCNTL, System V shared memory and semaphore support.
+PHP 5.4.0 or later with OpenSSL, PCNTL, System V shared memory and semaphore support.
 
 ```
 ./configure --with-openssl[=PATH] --enable-pcntl --enable-sysvshm --enable-sysvsem

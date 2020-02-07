@@ -76,11 +76,11 @@ class Feedback extends AbstractService
         $this->_aFeedback = array();
         $sBuffer = '';
         while (!feof($this->_hSocket)) {
-            $this->_log('INFO: Reading...');
+            $this->logger->info('Reading...');
             $sBuffer .= $sCurrBuffer = fread($this->_hSocket, 8192);
             $nCurrBufferLen = strlen($sCurrBuffer);
             if ($nCurrBufferLen > 0) {
-                $this->_log("INFO: {$nCurrBufferLen} bytes read.");
+                $this->logger->info("{$nCurrBufferLen} bytes read.");
             }
             unset($sCurrBuffer, $nCurrBufferLen);
 
@@ -91,7 +91,8 @@ class Feedback extends AbstractService
                     $sFeedbackTuple = substr($sBuffer, 0, $nFeedbackTupleLen);
                     $sBuffer = substr($sBuffer, $nFeedbackTupleLen);
                     $this->_aFeedback[] = $aFeedback = $this->_parseBinaryTuple($sFeedbackTuple);
-                    $this->_log(sprintf("INFO: New feedback tuple: timestamp=%d (%s), tokenLength=%d, deviceToken=%s.",
+                    $this->logger->info(sprintf(
+                        "New feedback tuple: timestamp=%d (%s), tokenLength=%d, deviceToken=%s.",
                         $aFeedback['timestamp'], date('Y-m-d H:i:s', $aFeedback['timestamp']),
                         $aFeedback['tokenLength'], $aFeedback['deviceToken']
                     ));
@@ -103,7 +104,7 @@ class Feedback extends AbstractService
             $null = NULL;
             $nChangedStreams = stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
             if ($nChangedStreams === false) {
-                $this->_log('WARNING: Unable to wait for a stream availability.');
+                $this->logger->warning('Unable to wait for a stream availability.');
                 break;
             }
         }

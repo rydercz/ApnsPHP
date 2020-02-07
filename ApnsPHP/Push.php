@@ -147,7 +147,7 @@ class Push extends AbstractService
         $this->_aErrors = array();
         $nRun = 1;
         while (($nMessages = count($this->_aMessageQueue)) > 0) {
-            $this->_log("INFO: Sending messages queue, run #{$nRun}: $nMessages message(s) left in queue.");
+            $this->logger->info("Sending messages queue, run #{$nRun}: $nMessages message(s) left in queue.");
 
             $bError = false;
             foreach ($this->_aMessageQueue as $k => &$aMessage) {
@@ -163,18 +163,18 @@ class Push extends AbstractService
                 if (!empty($aMessage['ERRORS'])) {
                     foreach ($aMessage['ERRORS'] as $aError) {
                         if ($aError['statusCode'] == 0) {
-                            $this->_log("INFO: Message ID {$k} {$sCustomIdentifier} has no error ({$aError['statusCode']}), removing from queue...");
+                            $this->logger->info("Message ID {$k} {$sCustomIdentifier} has no error ({$aError['statusCode']}), removing from queue...");
                             $this->_removeMessageFromQueue($k);
                             continue 2;
                         } else if ($aError['statusCode'] > 1 && $aError['statusCode'] <= 8) {
-                            $this->_log("WARNING: Message ID {$k} {$sCustomIdentifier} has an unrecoverable error ({$aError['statusCode']}), removing from queue without retrying...");
+                            $this->logger->warning("Message ID {$k} {$sCustomIdentifier} has an unrecoverable error ({$aError['statusCode']}), removing from queue without retrying...");
                             $this->_removeMessageFromQueue($k, true);
                             continue 2;
                         }
                     }
                     if (($nErrors = count($aMessage['ERRORS'])) >= $this->_nSendRetryTimes) {
-                        $this->_log(
-                            "WARNING: Message ID {$k} {$sCustomIdentifier} has {$nErrors} errors, removing from queue..."
+                        $this->logger->warning(
+                            "Message ID {$k} {$sCustomIdentifier} has {$nErrors} errors, removing from queue..."
                         );
                         $this->_removeMessageFromQueue($k, true);
                         continue;
@@ -182,7 +182,7 @@ class Push extends AbstractService
                 }
 
                 $nLen = strlen($aMessage['BINARY_NOTIFICATION']);
-                $this->_log("STATUS: Sending message ID {$k} {$sCustomIdentifier} (" . ($nErrors + 1) . "/{$this->_nSendRetryTimes}): {$nLen} bytes.");
+                $this->logger->info("Sending message ID {$k} {$sCustomIdentifier} (" . ($nErrors + 1) . "/{$this->_nSendRetryTimes}): {$nLen} bytes.");
 
                 $aErrorMessage = null;
                 if ($nLen !== ($nWritten = (int)@fwrite($this->_hSocket, $aMessage['BINARY_NOTIFICATION']))) {
@@ -207,7 +207,7 @@ class Push extends AbstractService
                 $null = NULL;
                 $nChangedStreams = @stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
                 if ($nChangedStreams === false) {
-                    $this->_log('ERROR: Unable to wait for a stream availability.');
+                    $this->logger->error('ERROR: Unable to wait for a stream availability.');
                     break;
                 } else if ($nChangedStreams > 0) {
                     $bError = $this->_updateQueue();
@@ -352,7 +352,7 @@ class Push extends AbstractService
             unset($aStreamErrorMessage);
         }
 
-        $this->_log('ERROR: Unable to send message ID ' .
+        $this->logger->error('Unable to send message ID ' .
             $aErrorMessage['identifier'] . ': ' .
             $aErrorMessage['statusMessage'] . ' (' . $aErrorMessage['statusCode'] . ').');
 

@@ -28,8 +28,9 @@
  */
 
 namespace ApnsPHP;
-use ApnsPHP\Log\EmbeddedLogger;
-use ApnsPHP\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Abstract class: this is the superclass for all Apple Push Notification Service
@@ -41,8 +42,10 @@ use ApnsPHP\Log\LoggerInterface;
  * @ingroup ApplePushNotificationService
  * @see http://tinyurl.com/ApplePushNotificationService
  */
-abstract class AbstractService
+abstract class AbstractService implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     const ENVIRONMENT_PRODUCTION = 0;
     /**< @type integer Production environment. */
     const ENVIRONMENT_SANDBOX = 1;
@@ -83,9 +86,6 @@ abstract class AbstractService
     protected $_nSocketSelectTimeout;
     /**< @type integer Socket select timeout in micro seconds. */
 
-    protected $_logger;
-    /**< @type LoggerInterface Logger. */
-
     protected $_hSocket;
     /**< @type resource SSL Socket. */
 
@@ -118,49 +118,8 @@ abstract class AbstractService
         $this->_nWriteInterval = self::WRITE_INTERVAL;
         $this->_nConnectRetryInterval = self::CONNECT_RETRY_INTERVAL;
         $this->_nSocketSelectTimeout = self::SOCKET_SELECT_TIMEOUT;
-    }
 
-    /**
-     * Set the Logger instance to use for logging purpose.
-     *
-     * The default logger is ApnsPHP_Log_Embedded, an instance
-     * of ApnsPHP\Log\ApnsPHP_Log_Interface that simply print to standard
-     * output log messages.
-     *
-     * To set a custom logger you have to implement ApnsPHP\Log\ApnsPHP_Log_Interface
-     * and use setLogger, otherwise standard logger will be used.
-     *
-     * @param  $logger @type ApnsPHP\Log\ApnsPHP_Log_Interface Logger instance.
-     * @throws Exception if Logger is not an instance
-     *         of ApnsPHP\Log\ApnsPHP_Log_Interface.
-     * @see LoggerInterface
-     * @see \ApnsPHP\Log\EmbeddedLogger
-     *
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        if (!is_object($logger)) {
-            throw new Exception(
-                "The logger should be an instance of 'ApnsPHP\Log\ApnsPHP_Log_Interface'"
-            );
-        }
-        if (!($logger instanceof LoggerInterface)) {
-            throw new Exception(
-                "Unable to use an instance of '" . get_class($logger) . "' as logger: " .
-                "a logger must implements ApnsPHP\Log\ApnsPHP_Log_Interface."
-            );
-        }
-        $this->_logger = $logger;
-    }
-
-    /**
-     * Get the Logger instance.
-     *
-     * @return @type ApnsPHP\Log\ApnsPHP_Log_Interface Current Logger instance.
-     */
-    public function getLogger()
-    {
-        return $this->_logger;
+        $this->logger = new NullLogger();
     }
 
     /**
@@ -355,11 +314,11 @@ abstract class AbstractService
             try {
                 $bConnected = $this->_connect();
             } catch (Exception $e) {
-                $this->_log('ERROR: ' . $e->getMessage());
+                $this->logger->error($e->getMessage());
                 if ($nRetry >= $this->_nConnectRetryTimes) {
                     throw $e;
                 } else {
-                    $this->_log(
+                    $this->logger->info(
                         "INFO: Retry to connect (" . ($nRetry + 1) .
                         "/{$this->_nConnectRetryTimes})..."
                     );
@@ -378,7 +337,7 @@ abstract class AbstractService
     public function disconnect()
     {
         if (is_resource($this->_hSocket)) {
-            $this->_log('INFO: Disconnected.');
+            $this->logger->info('Disconnected.');
             return fclose($this->_hSocket);
         }
         return false;
@@ -395,7 +354,7 @@ abstract class AbstractService
         $sURL = $this->_aServiceURLs[$this->_nEnvironment];
         unset($aURLs);
 
-        $this->_log("INFO: Trying {$sURL}...");
+        $this->logger->info("Trying {$sURL}...");;
 
         /**
          * @see http://php.net/manual/en/context.ssl.php
@@ -423,21 +382,8 @@ abstract class AbstractService
         stream_set_blocking($this->_hSocket, 0);
         stream_set_write_buffer($this->_hSocket, 0);
 
-        $this->_log("INFO: Connected to {$sURL}.");
+        $this->logger->info("Connected to {$sURL}.");
 
         return true;
-    }
-
-    /**
-     * Logs a message through the Logger.
-     *
-     * @param  $sMessage @type string The message.
-     */
-    protected function _log($sMessage)
-    {
-        if (!isset($this->_logger)) {
-            $this->_logger = new EmbeddedLogger();
-        }
-        $this->_logger->log($sMessage);
     }
 }

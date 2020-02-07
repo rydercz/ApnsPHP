@@ -6,8 +6,9 @@
 	"homepage": "https://github.com/immobiliare/ApnsPHP",
 	"license": "BSD-3-Clause",
 	"require": {
-		"php": ">=5.3.0",
-		"lib-openssl": "*"
+		"php": ">=5.4",
+		"lib-openssl": "*",
+		"psr/log": "^1.1"
 	},
 	"autoload": {
 		"psr-4": {
