@@ -1,0 +1,5 @@
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/Doc export-ignore
+/"Objective-C Demo" export-ignore
+/sample_* export-ignore
